@@ -8,3 +8,6 @@ ClojureScript Frontend Application
   - Uses [re-frame](https://github.com/day8/re-frame) lib for data-oriented functional SPA applications.
   - Uses [docker](https://www.docker.com/) to dockerize the uberjar so it is easy to deploy anywhere.
   - Usage: `make build-docker-and-run` or `docker compose up`
+
+  - Action:
+
