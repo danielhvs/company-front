@@ -11,4 +11,6 @@ ClojureScript Frontend Application
 
 ShowCase
 ===========
-  - https://github.com/danielhvs/company-front/assets/9825663/77406156-4fd4-45de-8b8f-05f85ad8bca1
+  <video>
+  <source src="https://github.com/danielhvs/company-front/assets/9825663/77406156-4fd4-45de-8b8f-05f85ad8bca1" type="video/mp4"/>
+</video>
