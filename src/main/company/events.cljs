@@ -29,7 +29,7 @@
 (rf/reg-event-db
  ::initialize
  (fn [_db _]
-   {:galvanizations (update-vals (group-by :data db/galvanizacoes) first)
+   {:shapes (update-vals (group-by :data db/shapes) first)
     :something false
     :other-something true}))
 

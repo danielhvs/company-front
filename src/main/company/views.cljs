@@ -30,10 +30,10 @@
     [:> Button {:variant "contained" :on-click #(rf/dispatch [::e/get-pdf data])}
      "get pdf"]))
 
-(defn calculate
+(defn search
   []
   [:> Button {:variant "contained" :on-click #(rf/dispatch [::e/calculate])}
-   "calculate"])
+   "search"])
 
 (def Checkbox* (r/adapt-react-class Checkbox))
 (def Radio* (r/adapt-react-class Radio))
@@ -58,19 +58,19 @@
                                  :name "other something"}])
         :label "Other Something"}]]]))
 
-(defn view-galvanizations
+(defn view-shapes
   []
-  (let [galvanizations (<sub [::s/galvanizations])]
+  (let [shapes (<sub [::s/shapes])]
     [:<>
-     [:> FormLabel {:id "demo-radio-buttons-group-label"} "Galvanizations"]
+     [:> FormLabel {:id "demo-radio-buttons-group-label"} "shapes"]
      [:> RadioGroup {:row true :aria-labelledby "demo-radio-buttons-group-label", :defaultValue "", :name "radio-buttons-group"}
-      (for [kw-galvanizacao (keys galvanizations)
-            :let [{:keys [label checked data]} (kw-galvanizacao galvanizations)]]
-        ^{:key kw-galvanizacao}
+      (for [kw-shape (keys shapes)
+            :let [{:keys [label checked data]} (kw-shape shapes)]]
+        ^{:key kw-shape}
         [:div {:on-click (fn [_e]
-                           (doseq [other (disj (set (keys galvanizations)) kw-galvanizacao)]
-                             (rf/dispatch [::e/input-state-updated :galvanizations other :checked false]))
-                           (rf/dispatch [::e/input-state-updated :galvanizations kw-galvanizacao :checked true]))}
+                           (doseq [other (disj (set (keys shapes)) kw-shape)]
+                             (rf/dispatch [::e/input-state-updated :shapes other :checked false]))
+                           (rf/dispatch [::e/input-state-updated :shapes kw-shape :checked true]))}
          [:> FormControlLabel {:value label, :control (r/as-element [Radio* {:checked checked :value data}])
                                :label label}]])]]))
 
@@ -106,10 +106,10 @@
                      :alignItems "center"
                      :justifyContent "center"}}
     [:> FormControl
-     [view-parameters]
-     [view-galvanizations]
+     #_[view-parameters]
+     [view-shapes]
      [:> Box {:sx {:m 1}}]
-     [calculate]]]
+     [search]]]
    [:> Grid {:item true
              :xs 12
              :md 6

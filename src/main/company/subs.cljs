@@ -18,7 +18,7 @@
     (:simulation db)))
 
 (rf/reg-sub
-  ::galvanizations
+  ::shapes
   (fn [db _v]
-    (:galvanizations db)))
+    (:shapes db)))
 

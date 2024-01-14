@@ -1,6 +1,7 @@
 (ns company.db)
 
-(def galvanizacoes
-  [{:label "cold" :data :a-frio}
-   {:label "hot" :data :a-quente}
-   {:label "none" :data :nenhuma :checked true}])
+(def shapes
+  [{:label "triangle" :data :triangle}
+   {:label "square" :data :square}
+   {:label "circle" :data :circle}
+   {:label "all" :data :all :checked true}])
