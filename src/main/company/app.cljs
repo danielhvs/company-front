@@ -1,9 +1,9 @@
-(ns tailwind.app
+(ns company.app
   (:require
    [re-frame.core :as rf]
    [reagent.dom :as dom]
-   [tailwind.events :as e]
-   [tailwind.views :as views]))
+   [company.events :as e]
+   [company.views :as views]))
 
 (defn app
   []

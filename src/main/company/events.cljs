@@ -1,4 +1,4 @@
-(ns tailwind.events
+(ns company.events
   (:require
    [ajax.core :as ajax]
    [ajax.protocols :as protocol]
@@ -6,7 +6,7 @@
    [day8.re-frame.http-fx] ; this will register the :http-xhrio implementation
    [goog.dom :as dom]
    [re-frame.core :as rf]
-   [tailwind.db :as db]))
+   [company.db :as db]))
 
 (def ^:private timeout 60000)
 (def ^:private api "http://localhost:3000")

@@ -1,4 +1,4 @@
-(ns tailwind.views
+(ns company.views
   (:require
    ["@mui/material/Box" :default Box]
    ["@mui/material/Button" :default Button]
@@ -19,8 +19,8 @@
    ["@mui/material/TableRow" :default TableRow]
    [re-frame.core :as rf]
    [reagent.core :as r]
-   [tailwind.events :as e]
-   [tailwind.subs :as s]))
+   [company.events :as e]
+   [company.subs :as s]))
 
 (def <sub (comp deref rf/subscribe))
 

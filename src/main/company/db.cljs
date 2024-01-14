@@ -1,4 +1,4 @@
-(ns tailwind.db)
+(ns company.db)
 
 (def galvanizacoes
   [{:label "cold" :data :a-frio}
