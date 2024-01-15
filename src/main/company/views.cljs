@@ -1,5 +1,7 @@
 (ns company.views
   (:require
+   ["@mui/icons-material/Delete" :default DeleteIcon]
+   ["@mui/icons-material/Edit" :default EditIcon]
    ["@mui/material/Box" :default Box]
    ["@mui/material/Button" :default Button]
    ["@mui/material/Checkbox" :default Checkbox]
@@ -8,6 +10,7 @@
    ["@mui/material/FormGroup" :default FormGroup]
    ["@mui/material/FormLabel" :default FormLabel]
    ["@mui/material/Grid" :default Grid]
+   ["@mui/material/IconButton" :default IconButton]
    ["@mui/material/Paper" :default Paper]
    ["@mui/material/Radio" :default Radio]
    ["@mui/material/RadioGroup" :default RadioGroup]
@@ -17,16 +20,16 @@
    ["@mui/material/TableContainer" :default TableContainer]
    ["@mui/material/TableHead" :default TableHead]
    ["@mui/material/TableRow" :default TableRow]
-   [re-frame.core :as rf]
-   [reagent.core :as r]
    [company.events :as e]
-   [company.subs :as s]))
+   [company.subs :as s]
+   [re-frame.core :as rf]
+   [reagent.core :as r]))
 
 (def <sub (comp deref rf/subscribe))
 
 (defn get-pdf
   []
-  (when-let [data (<sub [::s/simulation])]
+  (when-let [data (<sub [::s/products])]
     [:> Button {:variant "contained" :on-click #(rf/dispatch [::e/get-pdf data])}
      "get pdf"]))
 
@@ -71,9 +74,9 @@
          [:> FormControlLabel {:value label, :control (r/as-element [Radio* {:checked checked :value data}])
                                :label label}]])]]))
 
-(defn- view-simulation
+(defn- view-results
   []
-  (when-let [simulation (<sub [::s/simulation])]
+  (when-let [products (<sub [::s/products])]
     [:div {:class "px-1"}
      [:> TableContainer {:component Paper}
       [:> Table {:aria-label "simple table"}
@@ -84,12 +87,20 @@
           [:> TableCell {:align "right"} "Quantity"]
           [:> TableCell {:align "right"} "Price"]]]]
        [:> TableBody
-        (for [{:keys [name quantity price]} simulation]
+        (for [{:keys [_id name quantity price editing?]} products]
           [:> TableRow
            [:<>
             [:> TableCell {:align "left"} name]
             [:> TableCell {:align "right"} quantity]
-            [:> TableCell {:align "right"} price]]])]]]]))
+            [:> TableCell {:align "right"} price]
+            [:> TableCell {:align "center"}
+             [:> IconButton
+              [:> EditIcon {:on-click #(rf/dispatch [::e/edit-product _id])
+                            :color "primary"}]]]
+            [:> TableCell {:align "center"}
+             [:> IconButton
+              [:> DeleteIcon {:on-click #(rf/dispatch [::e/delete-product _id])
+                              :color "secondary"}]]]]])]]]]))
 
 (defn public
   []
@@ -115,7 +126,7 @@
                      :alignItems "center"
                      :justifyContent "center"}
              :backgroundColor "lightblue"}
-    [view-simulation]
+    [view-results]
     [:> Box {:sx {:m 1}}]
     [get-pdf]]])
 

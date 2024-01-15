@@ -2,7 +2,6 @@
   (:require
    [ajax.core :as ajax]
    [ajax.protocols :as protocol]
-   [clojure.set :as set]
    [company.db :as db]
    [day8.re-frame.http-fx] ; this will register the :http-xhrio implementation
    [goog.dom :as dom]
@@ -47,7 +46,7 @@
 (rf/reg-event-db
  ::sucess
  (fn [db [_ result]]
-   (assoc db :simulation result)))
+   (assoc db :products result)))
 
 (rf/reg-event-db
  ::http-fail
@@ -67,7 +66,36 @@
                  :on-success [::sucess]
                  :on-failure [::http-fail]}}))
 
-(defn- abre-pdf [arquivo-pdf]
+(rf/reg-event-db
+ ::deleted-ok
+ (fn [db [_ {:keys [_id]}]]
+   (assoc db :products
+          (remove #(= (:_id %) _id)
+                  (:products db)))))
+
+(rf/reg-event-fx
+ ::delete-product
+ (fn [{:keys [db]} [_ id]]
+   {:db db
+    :http-xhrio {:method :delete
+                 :uri (str api "/product/" id)
+                 :timeout timeout
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :format (ajax/json-request-format)
+                 :on-success [::deleted-ok]
+                 :on-failure [::http-fail]}}))
+
+(defn- set-editing-product [id {:keys [_id] :as item}]
+  (cond-> item
+    (= _id id) (assoc :editing? true)))
+
+(rf/reg-event-db
+ ::edit-product
+ (fn [db [_ id]]
+   (assoc db :products
+          (map (partial set-editing-product id) (:products db)))))
+
+(defn- open-pdf [arquivo-pdf]
   (let [file (js/Blob. (clj->js [arquivo-pdf])
                        (clj->js {:type "application/pdf"}))
         url (.createObjectURL js/URL file)
@@ -78,9 +106,9 @@
     (dom/removeChildren link)))
 
 (rf/reg-event-db
- ::sucesso-orcamento
+ ::pdf-received
  (fn [db [_ result]]
-   (abre-pdf result)
+   (open-pdf result)
    db))
 
 (rf/reg-event-fx
@@ -96,5 +124,5 @@
                                    :description "pdf"
                                    :read protocol/-body
                                    :type :arraybuffer}
-                 :on-success [::sucesso-orcamento]
+                 :on-success [::pdf-received]
                  :on-failure [::http-fail]}}))

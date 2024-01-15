@@ -13,9 +13,9 @@
    (:other-something db)))
 
 (rf/reg-sub
- ::simulation
+ ::products
  (fn [db _v]
-   (:simulation db)))
+   (:products db)))
 
 (rf/reg-sub
  ::shapes
