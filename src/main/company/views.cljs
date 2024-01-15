@@ -32,8 +32,9 @@
 
 (defn search
   []
-  [:> Button {:variant "contained" :on-click #(rf/dispatch [::e/calculate])}
-   "search"])
+  (let [shape (<sub [::s/selected-shape])]
+    [:> Button {:variant "contained" :on-click #(rf/dispatch [::e/search (:data shape)])}
+     "search"]))
 
 (def Checkbox* (r/adapt-react-class Checkbox))
 (def Radio* (r/adapt-react-class Radio))
@@ -64,13 +65,9 @@
     [:<>
      [:> FormLabel {:id "demo-radio-buttons-group-label"} "shapes"]
      [:> RadioGroup {:row true :aria-labelledby "demo-radio-buttons-group-label", :defaultValue "", :name "radio-buttons-group"}
-      (for [kw-shape (keys shapes)
-            :let [{:keys [label checked data]} (kw-shape shapes)]]
-        ^{:key kw-shape}
-        [:div {:on-click (fn [_e]
-                           (doseq [other (disj (set (keys shapes)) kw-shape)]
-                             (rf/dispatch [::e/input-state-updated :shapes other :checked false]))
-                           (rf/dispatch [::e/input-state-updated :shapes kw-shape :checked true]))}
+      (for [{:keys [label checked data] :as shape} shapes]
+        ^{:key label}
+        [:div {:on-click (fn [_e] (rf/dispatch [::e/shape-selected shape]))}
          [:> FormControlLabel {:value label, :control (r/as-element [Radio* {:checked checked :value data}])
                                :label label}]])]]))
 

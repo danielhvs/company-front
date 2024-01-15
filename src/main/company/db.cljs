@@ -1,7 +1,7 @@
 (ns company.db)
 
 (def shapes
-  [{:label "triangle" :data :triangle}
-   {:label "square" :data :square}
-   {:label "circle" :data :circle}
-   {:label "all" :data :all :checked true}])
+  [{:label "all", :data :all, :checked true}
+   {:label "circle", :data :circle}
+   {:label "square", :data :square}
+   {:label "triangle", :data :triangle}])

@@ -2,11 +2,11 @@
   (:require
    [ajax.core :as ajax]
    [ajax.protocols :as protocol]
-   [clojure.string :as str]
+   [clojure.set :as set]
+   [company.db :as db]
    [day8.re-frame.http-fx] ; this will register the :http-xhrio implementation
    [goog.dom :as dom]
-   [re-frame.core :as rf]
-   [company.db :as db]))
+   [re-frame.core :as rf]))
 
 (def ^:private timeout 60000)
 (def ^:private api "http://localhost:3000")
@@ -15,6 +15,17 @@
  ::input-updated
  (fn [db [_ input v]]
    (assoc-in db [input :data] v)))
+
+(rf/reg-event-db
+ ::shape-selected
+ (fn [db [_ shape]]
+   (let [shapes (:shapes db)
+         all (mapv #(select-keys % [:label :data]) shapes)
+         selected (first (filter #(= % (select-keys shape [:label :data])) all))
+         removed (remove #(= selected %) all)
+         new-shapes (conj removed
+                          (assoc selected :checked true))]
+     (assoc db :shapes (sort-by :label new-shapes))))) ;; HACK lazy me fix this simole thing
 
 (rf/reg-event-db
  ::input-state-updated
@@ -29,7 +40,7 @@
 (rf/reg-event-db
  ::initialize
  (fn [_db _]
-   {:shapes (update-vals (group-by :data db/shapes) first)
+   {:shapes db/shapes
     :something false
     :other-something true}))
 
@@ -45,11 +56,11 @@
    db))
 
 (rf/reg-event-fx
- ::calculate
- (fn [{:keys [db]} _v]
+ ::search
+ (fn [{:keys [db]} [_ v]]
    {:db db
     :http-xhrio {:method :get
-                 :uri (str api "/calculate")
+                 :uri (str api "/search/?shape=" (name v))
                  :timeout timeout
                  :format (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
