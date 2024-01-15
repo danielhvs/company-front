@@ -1,13 +1,11 @@
 (ns company.views
   (:require
-   ["@mui/icons-material/Delete" :default DeleteIcon]
+   ["@mui/icons-material/Check" :default CheckIcon]
    ["@mui/icons-material/Edit" :default EditIcon]
    ["@mui/material/Box" :default Box]
    ["@mui/material/Button" :default Button]
-   ["@mui/material/Checkbox" :default Checkbox]
    ["@mui/material/FormControl" :default FormControl]
    ["@mui/material/FormControlLabel" :default FormControlLabel]
-   ["@mui/material/FormGroup" :default FormGroup]
    ["@mui/material/FormLabel" :default FormLabel]
    ["@mui/material/Grid" :default Grid]
    ["@mui/material/IconButton" :default IconButton]
@@ -20,6 +18,7 @@
    ["@mui/material/TableContainer" :default TableContainer]
    ["@mui/material/TableHead" :default TableHead]
    ["@mui/material/TableRow" :default TableRow]
+   ["@mui/icons-material/Delete" :default DeleteIcon] ; import CheckIcon from '@mui/icons-material/Check';
    [company.events :as e]
    [company.subs :as s]
    [re-frame.core :as rf]
@@ -39,28 +38,7 @@
     [:> Button {:variant "contained" :on-click #(rf/dispatch [::e/search (:data shape)])}
      "search"]))
 
-(def Checkbox* (r/adapt-react-class Checkbox))
 (def Radio* (r/adapt-react-class Radio))
-
-(defn view-parameters
-  []
-  (let [something (<sub [::s/something])
-        other-someting (<sub [::s/other-something])]
-    [:<>
-     [:> FormLabel {:component "legend"} "Parameters"]
-     [:> FormGroup
-      [:> FormControlLabel
-       {:control (r/as-element [Checkbox*
-                                {:checked other-someting
-                                 :onChange #(rf/dispatch [::e/key-val :other-something (not other-someting)])
-                                 :name "something"}])
-        :label "Something"}]
-      [:> FormControlLabel
-       {:control (r/as-element [Checkbox*
-                                {:checked something
-                                 :onChange #(rf/dispatch [::e/key-val :something (not something)])
-                                 :name "other something"}])
-        :label "Other Something"}]]]))
 
 (defn view-shapes
   []
@@ -84,19 +62,25 @@
         [:> TableRow
          [:<>
           [:> TableCell {:align "left"} "Name"]
-          [:> TableCell {:align "right"} "Quantity"]
-          [:> TableCell {:align "right"} "Price"]]]]
+          [:> TableCell {:align "right"} "Price"]
+          [:> TableCell {:align "right"} "Quantity"]]]]
        [:> TableBody
         (for [{:keys [_id name quantity price editing?]} products]
           [:> TableRow
            [:<>
             [:> TableCell {:align "left"} name]
-            [:> TableCell {:align "right"} quantity]
             [:> TableCell {:align "right"} price]
+            [:> TableCell {:align "right"}
+             (if editing?
+               [:<>
+                quantity
+                [:button {:on-click #(rf/dispatch [::e/update-product-locally _id (dec quantity)])} "-"]
+                [:button {:on-click #(rf/dispatch [::e/update-product-locally _id (inc quantity)])} "+"]]
+               quantity)]
             [:> TableCell {:align "center"}
-             [:> IconButton
-              [:> EditIcon {:on-click #(rf/dispatch [::e/edit-product _id])
-                            :color "primary"}]]]
+             (if editing? 
+               [:> IconButton [:> CheckIcon {:on-click #(rf/dispatch [::e/update-product-backend _id]) :color "secondary"}]]
+               [:> IconButton [:> EditIcon {:on-click #(rf/dispatch [::e/edit-product _id]) :color "primary"}]])]
             [:> TableCell {:align "center"}
              [:> IconButton
               [:> DeleteIcon {:on-click #(rf/dispatch [::e/delete-product _id])
