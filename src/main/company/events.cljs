@@ -136,7 +136,7 @@
         url (.createObjectURL js/URL file)
         link (dom/createDom "a" #js {"href" url})]
     (dom/appendChild (.-body js/document) link)
-    (set! (.-download link) "orcamento-company.pdf")
+    (set! (.-download link) "company.pdf")
     (.click link)
     (dom/removeChildren link)))
 
