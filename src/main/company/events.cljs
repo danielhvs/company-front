@@ -100,12 +100,26 @@
 (rf/reg-event-db
  ::product-updated
  (fn [db [_ {:keys [_id]}]]
-   (let [ret (assoc db :products
-                    (map (partial update-product _id #(assoc % :editing? false))
-                         (:products db)))]
-     (prn {:debug "update-product ret" :data {:ret (:products ret)
-                                              :bef (:products db)}})
-     ret)))
+   (assoc db :products
+          (map (partial update-product _id #(assoc % :editing? false))
+               (:products db)))))
+
+(rf/reg-event-fx
+ ::create-product
+ (fn [{:keys [db]} [_ shape]]
+   {:db db
+    :http-xhrio {:method :post
+                 :uri (str api "/product")
+                 :timeout timeout
+                 :params {:quantity 25
+                          :price 25
+                          :name (if (= :all shape) 
+                                  (->> [:circle :triangle :square] shuffle first)
+                                  shape)}
+                 :format (ajax/json-request-format)
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :on-success [::product-updated]
+                 :on-failure [::http-fail]}}))
 
 (rf/reg-event-fx
  ::update-product-backend
@@ -126,7 +140,7 @@
  ::edit-product
  (fn [db [_ id]]
    (assoc db :products
-          (map (partial update-product id #(assoc % :editing? true)) 
+          (map (partial update-product id #(assoc % :editing? true))
                (:products db)))))
 
 (defn- open-pdf [arquivo-pdf]

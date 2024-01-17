@@ -1,6 +1,7 @@
 (ns company.views
   (:require
    ["@mui/icons-material/Check" :default CheckIcon]
+   ["@mui/icons-material/AddCircleOutline" :default AddCircleOutlineIcon]
    ["@mui/icons-material/Edit" :default EditIcon]
    ["@mui/material/Box" :default Box]
    ["@mui/material/Button" :default Button]
@@ -55,36 +56,39 @@
 (defn- view-results
   []
   (when-let [products (<sub [::s/products])]
-    [:div {:class "px-1"}
-     [:> TableContainer {:component Paper}
-      [:> Table {:aria-label "simple table"}
-       [:> TableHead
-        [:> TableRow
-         [:<>
-          [:> TableCell {:align "left"} "Name"]
-          [:> TableCell {:align "right"} "Price"]
-          [:> TableCell {:align "right"} "Quantity"]]]]
-       [:> TableBody
-        (for [{:keys [_id name quantity price editing?]} products]
+    (let [shape (<sub [::s/selected-shape])]
+      [:div {:class "px-1"}
+       [:> TableContainer {:component Paper}
+        [:> Table {:aria-label "simple table"}
+         [:> TableHead
           [:> TableRow
            [:<>
-            [:> TableCell {:align "left"} name]
-            [:> TableCell {:align "right"} price]
-            [:> TableCell {:align "right"}
-             (if editing?
-               [:<>
-                quantity
-                [:button {:on-click #(rf/dispatch [::e/update-product-locally _id (dec quantity)])} "-"]
-                [:button {:on-click #(rf/dispatch [::e/update-product-locally _id (inc quantity)])} "+"]]
-               quantity)]
-            [:> TableCell {:align "center"}
-             (if editing? 
-               [:> IconButton [:> CheckIcon {:on-click #(rf/dispatch [::e/update-product-backend _id]) :color "secondary"}]]
-               [:> IconButton [:> EditIcon {:on-click #(rf/dispatch [::e/edit-product _id]) :color "primary"}]])]
-            [:> TableCell {:align "center"}
-             [:> IconButton
-              [:> DeleteIcon {:on-click #(rf/dispatch [::e/delete-product _id])
-                              :color "secondary"}]]]]])]]]]))
+            [:> TableCell {:align "left"} "Name"]
+            [:> TableCell {:align "right"} "Price"]
+            [:> TableCell {:align "right"} "Quantity"]
+            [:> TableCell {:align "right"} 
+             [:> IconButton [:> AddCircleOutlineIcon {:on-click #(rf/dispatch [::e/create-product (:data shape)]) :color "primary"}]]]]]]
+         [:> TableBody
+          (for [{:keys [_id name quantity price editing?]} products]
+            [:> TableRow
+             [:<>
+              [:> TableCell {:align "left"} name]
+              [:> TableCell {:align "right"} price]
+              [:> TableCell {:align "right"}
+               (if editing?
+                 [:<>
+                  quantity
+                  [:button {:on-click #(rf/dispatch [::e/update-product-locally _id (dec quantity)])} "-"]
+                  [:button {:on-click #(rf/dispatch [::e/update-product-locally _id (inc quantity)])} "+"]]
+                 quantity)]
+              [:> TableCell {:align "center"}
+               (if editing?
+                 [:> IconButton [:> CheckIcon {:on-click #(rf/dispatch [::e/update-product-backend _id]) :color "secondary"}]]
+                 [:> IconButton [:> EditIcon {:on-click #(rf/dispatch [::e/edit-product _id]) :color "primary"}]])]
+              [:> TableCell {:align "center"}
+               [:> IconButton
+                [:> DeleteIcon {:on-click #(rf/dispatch [::e/delete-product _id])
+                                :color "secondary"}]]]]])]]]])))
 
 (defn public
   []
