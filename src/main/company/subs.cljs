@@ -26,7 +26,6 @@
  ::selected-shape
  :<- [::shapes]
  (fn [shapes _v]
-   (js/console.log "WUT" shapes)
    (some->> shapes
             (filter :checked)
             first)))
