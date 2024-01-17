@@ -56,10 +56,10 @@
 
 (rf/reg-event-fx
  ::search
- (fn [{:keys [db]} [_ v]]
+ (fn [{:keys [db]} [_ shape]]
    {:db db
     :http-xhrio {:method :get
-                 :uri (str api "/product?shape=" (name v))
+                 :uri (str api "/product?shape=" (name shape))
                  :timeout timeout
                  :format (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
@@ -118,7 +118,7 @@
                                   shape)}
                  :format (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
-                 :on-success [::product-updated]
+                 :on-success [::search shape]
                  :on-failure [::http-fail]}}))
 
 (rf/reg-event-fx
