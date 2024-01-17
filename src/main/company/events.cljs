@@ -59,7 +59,7 @@
  (fn [{:keys [db]} [_ v]]
    {:db db
     :http-xhrio {:method :get
-                 :uri (str api "/search/?shape=" (name v))
+                 :uri (str api "/product?shape=" (name v))
                  :timeout timeout
                  :format (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
@@ -86,39 +86,37 @@
                  :on-failure [::http-fail]}}))
 
 (defn- update-product
-  ([id {:keys [_id] :as item}]
-   (cond-> item
-     (= _id id) (assoc :editing? true)))
-  ([id update-fn {:keys [_id] :as item}]
-   (cond-> item
-     (= _id id) (update-fn))))
+  [id update-fn {:keys [_id] :as item}]
+  (cond-> item
+    (= _id id) (update-fn)))
 
 (rf/reg-event-db
  ::update-product-locally
  (fn [db [_ id quantity]]
    (assoc db :products
-          (map (partial update-product id (fn [p] (assoc p :quantity quantity)))
+          (map (partial update-product id #(assoc % :quantity quantity))
                (:products db)))))
 
 (rf/reg-event-db
-  ::product-updated
-  (fn [db [_ {:keys [_id]}]]
-    (let [ret (assoc db :products
-                     (map (partial update-product _id #(assoc % :editing? false)) 
-                          (:products db)))]
-      (prn {:debug "update-product ret" :data {:ret (:products ret)
-                                               :bef (:products db)}})
-      ret)))
+ ::product-updated
+ (fn [db [_ {:keys [_id]}]]
+   (let [ret (assoc db :products
+                    (map (partial update-product _id #(assoc % :editing? false))
+                         (:products db)))]
+     (prn {:debug "update-product ret" :data {:ret (:products ret)
+                                              :bef (:products db)}})
+     ret)))
 
 (rf/reg-event-fx
  ::update-product-backend
  (fn [{:keys [db]} [_ id]]
-   (prn {:debug "update-product id" :data id})
    {:db db
-    :http-xhrio {:method :post
+    :http-xhrio {:method :put
                  :uri (str api "/product")
                  :timeout timeout
-                 :params (first (filter (fn [p] (= (:_id p) id)) (:products db)))
+                 :params (->> (:products db)
+                              (filter #(= (:_id %) id))
+                              first)
                  :format (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success [::product-updated]
@@ -128,7 +126,8 @@
  ::edit-product
  (fn [db [_ id]]
    (assoc db :products
-          (map (partial update-product id) (:products db)))))
+          (map (partial update-product id #(assoc % :editing? true)) 
+               (:products db)))))
 
 (defn- open-pdf [arquivo-pdf]
   (let [file (js/Blob. (clj->js [arquivo-pdf])
