@@ -24,7 +24,7 @@
          removed (remove #(= selected %) all)
          new-shapes (conj removed
                           (assoc selected :checked true))]
-     (assoc db :shapes (sort-by :label new-shapes))))) ;; HACK lazy me fix this simole thing
+     (assoc db :shapes (sort-by :label new-shapes))))) ;; HACK lazy me: needs to fix ordering more properly
 
 (rf/reg-event-db
  ::input-state-updated
