@@ -22,6 +22,7 @@
     "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.7",
     "@mui/material": "^5.15.1",
+    "@mui/icons-material": "^5.15.1", 
     "@tailwindcss/forms": "^0.5.3",
     "create-react-class": "15.7.0",
     "cross-env": "^7.0.3",

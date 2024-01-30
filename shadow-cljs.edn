@@ -8,7 +8,7 @@
  :builds
  {:app
   {:target :browser
-   :modules {:main {:init-fn tailwind.app/init}}
+   :modules {:main {:init-fn company.app/init}}
    :output-dir "resources/public/assets/js"
    :asset-path "/js"
    :devtools
