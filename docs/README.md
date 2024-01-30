@@ -1,5 +1,6 @@
 ClojureScript Frontend Application
 ===========
+  - A simple product CRUD application
   - Uses [tools.deps](https://clojure.org/guides/deps_and_cli) as a build tool.
   - Uses [shadow-cljs](./shadow.md) as a build tool.
   - Uses [material-ui](https://mui.com/material-ui/getting-started/usage/) as a frontend components library.
@@ -11,7 +12,8 @@ ClojureScript Frontend Application
 
 ShowCase
 ===========
-https://github.com/danielhvs/company-front/assets/9825663/94fe2622-b80b-41a4-a051-cb627964a1bb
+https://github.com/danielhvs/company-front/assets/9825663/aae80738-6f01-4777-bd4d-614eb18f8193
+
 
 
 
